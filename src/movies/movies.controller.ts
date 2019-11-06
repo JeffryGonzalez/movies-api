@@ -1,5 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
-
+import { Controller, Get, Post, Body } from '@nestjs/common';
+import * as cuid from 'cuid';
+import { NewMovie } from './models';
 @Controller('movies')
 export class MoviesController {
     data: Movie[] = [
@@ -11,6 +12,18 @@ export class MoviesController {
     getAllMovies() {
         return ({ movies: this.data });
     }
+
+    @Post()
+    async addMovie(@Body() movieToAdd: NewMovie) {
+        movieToAdd.id = cuid();
+        this.data.push(movieToAdd);
+
+        return await new Promise((res) => {
+            setTimeout(() => {
+                res(movieToAdd);
+            }, 3000);
+        });
+    }
 }
 
 interface Movie {
@@ -19,3 +32,4 @@ interface Movie {
     rentalDays: number;
     rentalPrice: number;
 }
+
